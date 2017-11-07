@@ -25,4 +25,8 @@
     <style name="AppTheme.Divider">
         <item name="android:background">?android:attr/listDivider</item>
     </style>
+    <style name="anim_menu_bottombar">
+        <item name="android:windowEnterAnimation">@anim/menu_buttombar_in</item>
+        <item name="android:windowExitAnimation">@anim/menu_buttombar_out</item>
+    </style>
 </resources>
