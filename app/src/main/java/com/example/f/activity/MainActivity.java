@@ -1,9 +1,8 @@
-package com.example.f;
+package com.example.f.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.ContentUris;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -18,17 +17,22 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.example.f.R;
+import com.example.f.util.SnackbarUtils;
 import com.example.f.util.ToastUtil;
 
 import java.io.File;
@@ -50,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
 
+    private TextView identify_textview;  //登录注册按钮
+
+    private DrawerLayout mDrawerLayout; //滑动布局
+
+    private long mExitTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
          * 在直接获取控件的时候会空指针异常
          * 先获取到headerview,在获取不会出错
          */
+        mDrawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_view);
         View view = navigationView.getHeaderView(0);
         micon_image = (CircleImageView) view.findViewById(R.id.icon_image);
@@ -173,7 +183,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+        //为menu注册点击事件
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.action_information:
+                       // ToastUtil.showMessage("information");
+                        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                       startActivity(intent);
+                        mDrawerLayout.closeDrawers();
 
+                }
+                return true;
+            }
+        });
     }
 
     /**
@@ -210,10 +234,10 @@ public class MainActivity extends AppCompatActivity {
         Button bt_cancle = (Button) popView.findViewById(R.id.btn_pop_cancel);
         //获取屏幕宽高
         int weight = getResources().getDisplayMetrics().widthPixels;
-        int height = getResources().getDisplayMetrics().heightPixels*1/3;
+        int height = getResources().getDisplayMetrics().heightPixels/3;
         final PopupWindow popupWindow = new PopupWindow(popView,weight,height);
         popupWindow.setAnimationStyle(R.style.anim_menu_bottombar);
-        popupWindow.setFocusable(true);
+        popupWindow.setFocusable(true); //获取焦点，可以处理与用户的交互
         //点击外部popueWindow消失
         popupWindow.setOutsideTouchable(true);
         bt_album.setOnClickListener(new View.OnClickListener() {
@@ -262,7 +286,19 @@ public class MainActivity extends AppCompatActivity {
         intent.setType("image/*");
         startActivityForResult(intent,CHOOSE_PHOTO);
     }
-
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawers();
+            return;
+        }
+        if (System.currentTimeMillis() - mExitTime > 2000) {
+            mExitTime = System.currentTimeMillis();
+            SnackbarUtils.show(this,"再按一次退出");
+        } else {
+            finish();
+        }
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
@@ -278,4 +314,5 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
 }

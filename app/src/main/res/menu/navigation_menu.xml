@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
+    <group >
         <item
-            android:id="@+id/action_history"
+            android:id="@+id/action_information"
             android:icon="@drawable/ic_menu_history"
-            android:title="历史信息" />
+            android:title="个人信息" />
         <item
             android:id="@+id/action_qrcode"
             android:icon="@drawable/ic_menu_qrcode"
